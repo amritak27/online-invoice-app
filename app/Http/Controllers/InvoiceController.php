@@ -6,7 +6,6 @@ use App\Models\Counter;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class InvoiceController extends Controller
 {
@@ -91,6 +90,10 @@ class InvoiceController extends Controller
 
             InvoiceItem::create($itemData);
         }
+
+        return response()->json([
+            "success" => "new invoice added..!"
+        ], 200);
     }
 
     public function show_invoice($id)
@@ -100,5 +103,51 @@ class InvoiceController extends Controller
         return response()->json([
             'invoice' => $invoice
         ], 200);
+    }
+    public function edit_invoice($id)
+    {
+        $invoice = Invoice::with(['customer', 'invoice_items.product'])->findOrFail($id);
+
+        return response()->json([
+            'invoice' => $invoice
+        ], 200);
+    }
+
+    public function update_invoice($id, Request $request)
+    {
+
+        $invoice = Invoice::where('id', $id)->first();
+        $invoicedata = $request->except(["invoice_item"]);
+        $invoice->update($invoicedata);  
+
+        $invoiceItems = $request->input("invoice_item");
+        $invoice->invoice_items()->delete();
+
+        foreach(json_decode($invoiceItems) as $item) {
+            $itemData['product_id'] = $item->product_id;
+            $itemData['invoice_id'] = $invoice->id;
+            $itemData['quantity'] = $item->quantity;
+            $itemData['unit_price'] = $item->unit_price;
+
+            InvoiceItem::create($itemData);
+        }
+
+        return response()->json(["success" => "Invoice updated..!"], 200);
+    }
+    public  function delete_invoice_items($id)
+    {
+        $invoiceItems = InvoiceItem::findOrFail( $id ); 
+        $invoiceItems->delete();
+
+        return response()->json(["success"=> "Invoice item deleted"], 200);
+    }
+
+    public function delete_invoice($id)
+    {
+        $invoice = Invoice::findOrFail( $id );
+        $invoice->invoice_items()->delete();    
+        $invoice->delete();
+
+        return response()->json(["success"=> "Invoice deleted..!"],200);
     }
 }

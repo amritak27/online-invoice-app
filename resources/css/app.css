@@ -225,13 +225,14 @@ ul {
 }
 
 .selectBtnFlat {
-    border: none;
+    border: 1px solid;
     padding: 9px 15px;
     border-radius: 4px;
     cursor: pointer;
     position: relative;
     color: #FFF;
-    background: none;
+    background: #080000;
+    margin-right: 5px;
 }
 
 .table--heading2 {

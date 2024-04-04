@@ -127,7 +127,7 @@
                 <button class="btn btn-light mr-2 btn__close--modal" @click="showModal = false">
                     Cancel
                 </button>
-                <button class="btn btn-light btn__close--modal ">Save</button>
+                <button class="btn btn-light btn__close--modal">Save</button>
             </div>
         </div>
     </div>
